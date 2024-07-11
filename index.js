@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 app.use(cors());
+app.use(express.static('dist'));
 
 var morgan = require('morgan');
 morgan.token('responseData', function (req, res) {
@@ -132,5 +133,5 @@ app.post('/api/persons', (request, response) => {
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
-    console.log('visit BaseUrl/info to start')
+    console.log('visit BaseUrl/info to start');
 });

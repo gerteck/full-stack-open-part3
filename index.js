@@ -1,7 +1,17 @@
 const express = require('express');
 const app = express();
 
+var morgan = require('morgan');
+morgan.token('responseData', function (req, res) {
+    return JSON.stringify(req.body);
+})
+
+const morganFormatString = morgan(':method :url :status :res[content-length] - :response-time ms , :responseData')
+
+
+// Attach Middleware
 app.use(express.json());
+app.use(morganFormatString);
 
 let persons = [
     {
@@ -66,7 +76,6 @@ app.delete('/api/persons/:id', (request, response) => {
 
 app.post('/api/persons', (request, response) => {
     const body = request.body;
-    console.log(body);
     if (!body) {
         return response.status(400).json({
             error: 'content missing'
@@ -100,5 +109,5 @@ app.post('/api/persons', (request, response) => {
 const PORT = 3001;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
-    console.log(`http://localhost:${PORT}`)
+    console.log(`http://localhost:${PORT} \n`)
 });

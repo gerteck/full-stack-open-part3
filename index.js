@@ -1,5 +1,7 @@
 const express = require('express');
 const app = express();
+const cors = require('cors');
+app.use(cors());
 
 var morgan = require('morgan');
 morgan.token('responseData', function (req, res) {
@@ -69,7 +71,6 @@ app.get('/api/persons/:id', (request, response) => {
 app.delete('/api/persons/:id', (request, response) => {
     const id = request.params.id;
     persons = persons.filter(person => person.id !== id);
-
     // Does not delete permanently for now.
     response.status(204).end();
 });
@@ -96,7 +97,7 @@ app.post('/api/persons', (request, response) => {
     }
 
     const person = {
-        id: Math.floor(Math.random() * 1000),
+        id: Math.floor(Math.random() * 1000).toString(),
         name: body.name,
         number: body.number
     };

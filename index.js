@@ -51,7 +51,29 @@ app.get('/', (request, response) => {
 
 app.get('/info', (request, response) => {
     const date = new Date();
-    response.send(`<p>Phonebook has info for ${persons.length} people</p> <br/> <p>DateTime: ${date}</p>`);
+    const uptime = process.uptime(); // Server uptime in seconds
+
+    // Convert uptime to a more readable format
+    const uptimeDays = Math.floor(uptime / (24 * 60 * 60));
+    const uptimeHours = Math.floor((uptime % (24 * 60 * 60)) / (60 * 60));
+    const uptimeMinutes = Math.floor((uptime % (60 * 60)) / 60);
+    const uptimeSeconds = Math.floor(uptime % 60);
+
+    response.send(`
+        <h1>Phonebook Info</h1>
+        <p>Phonebook has info for ${persons.length} people</p>
+        <p>Server has been running for: ${uptimeDays} days, ${uptimeHours} hours, ${uptimeMinutes} minutes, ${uptimeSeconds} seconds</p>
+        <p>Current server time: ${date.toLocaleString()}</p>
+        <h2>Available Endpoints</h2>
+        <ul>
+            <li>GET / - Welcome message</li>
+            <li>GET /info - Information about the phonebook and server</li>
+            <li>GET /api/persons - Retrieve all persons</li>
+            <li>GET /api/persons/:id - Retrieve a person by ID</li>
+            <li>POST /api/persons - Add a new person</li>
+            <li>DELETE /api/persons/:id - Delete a person by ID</li>
+        </ul>
+    `);
 });
 
 app.get('/api/persons', (request, response) => {
@@ -107,8 +129,8 @@ app.post('/api/persons', (request, response) => {
 });
 
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
-    console.log(`http://localhost:${PORT} \n`)
+    console.log('visit BaseUrl/info to start')
 });

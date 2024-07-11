@@ -1,5 +1,7 @@
-const express = require('express')
-const app = express()
+const express = require('express');
+const app = express();
+
+app.use(express.json());
 
 let persons = [
     {
@@ -24,6 +26,13 @@ let persons = [
     }
 ];
 
+const generateId = () => {
+    const maxId = notes.length > 0
+        ? Math.max(...notes.map(n => Number(n.id)))
+        : 0
+    return String(maxId + 1)
+}
+
 app.get('/', (request, response) => {
     response.send('<h1>API for Phonebook</h1>');
 });
@@ -31,6 +40,10 @@ app.get('/', (request, response) => {
 app.get('/info', (request, response) => {
     const date = new Date();
     response.send(`<p>Phonebook has info for ${persons.length} people</p> <br/> <p>DateTime: ${date}</p>`);
+});
+
+app.get('/api/persons', (request, response) => {
+    response.json(persons);
 });
 
 app.get('/api/persons/:id', (request, response) => {
@@ -51,9 +64,38 @@ app.delete('/api/persons/:id', (request, response) => {
     response.status(204).end();
 });
 
-app.get('/api/persons', (request, response) => {
-    response.json(persons);
+app.post('/api/persons', (request, response) => {
+    const body = request.body;
+    console.log(body);
+    if (!body) {
+        return response.status(400).json({
+            error: 'content missing'
+        });
+    }
+
+    // person has name and number
+    if (!body.name || !body.number) {
+        return response.status(400).json({
+            error: 'name or number missing'
+        });
+    }
+
+    if (persons.find(person => person.name === body.name)) {
+        return response.status(400).json({
+            error: 'name already exists in phonebook'
+        });
+    }
+
+    const person = {
+        id: Math.floor(Math.random() * 1000),
+        name: body.name,
+        number: body.number
+    };
+
+    persons = persons.concat(person);
+    response.json(person);
 });
+
 
 const PORT = 3001;
 app.listen(PORT, () => {

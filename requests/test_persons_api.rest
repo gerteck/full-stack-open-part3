@@ -1,0 +1,14 @@
+// Install VS-Code extension "REST Client" to run this file
+
+###
+// Get Person 1
+GET http://localhost:3001/api/persons/1
+
+###
+// Get all Persons
+GET http://localhost:3001/api/persons
+
+###
+// Delete Person with id 1
+DELETE http://localhost:3001/api/persons/1
+

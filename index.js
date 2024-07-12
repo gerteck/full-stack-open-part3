@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan'); // Morgan for logging
 
-morgan.token('responseData', function (req, res) {
+morgan.token('responseData', function (req, _res) {
     return JSON.stringify(req.body);
 });
 const morganFormatString = morgan(':method :url :status :res[content-length] - :response-time ms , :responseData')
@@ -22,7 +22,7 @@ const Person = require('./models/person');
 //     response.send('<h1>API for Phonebook</h1>');
 // });
 
-app.get('/info', (request, response) => {
+app.get('/info', (_request, response) => {
     const date = new Date();
     const uptime = process.uptime(); // Server uptime in seconds
 
@@ -51,7 +51,7 @@ app.get('/info', (request, response) => {
     });
 });
 
-app.get('/api/persons', (request, response) => {
+app.get('/api/persons', (_request, response) => {
     // Connect to persons database in MongoDB
     Person.find({}).then(persons => {
         response.json(persons);
@@ -72,7 +72,7 @@ app.get('/api/persons/:id', (request, response, next) => {
 
 app.delete('/api/persons/:id', (request, response) => {
     const id = request.params.id;
-    Person.findByIdAndDelete(id).then(result => {
+    Person.findByIdAndDelete(id).then(_result => {
         response.status(204).end();
     });
     return;
@@ -122,11 +122,11 @@ app.put('/api/persons/:id', (request, response, next) => {
 });
 
 
-const unknownEndpoint = (request, response) => {
+const unknownEndpoint = (_request, response) => {
     response.status(404).send({ error: 'unknown endpoint' });
 };
 
-const errorHandler = (error, request, response, next) => {
+const errorHandler = (error, _request, response, next) => {
     console.error(error.message);
     // console.log("in error handler");
 

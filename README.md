@@ -21,6 +21,7 @@ Cloud-based MongoDB database for phonebook application with MongoDB Atlas.
   * morgan (node.js module, HTTP request logger middleware)
 * Nodemon (Auto restart node application)
 * MongoDB (Mongoose)
+* ESLint (dev dep)
 
 Install dependencies: `npm install`
 

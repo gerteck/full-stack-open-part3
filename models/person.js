@@ -22,9 +22,9 @@ const personSchema = new mongoose.Schema({
         required: [true, 'Phone number required'],
         minlength: 8,
         validate: {
-            // Custom validator, but 4-4 format instead for Singapore
+            // Custom validator, but 4-4 only, 8 digits only
             validator: (v) => {
-                return /\d{4}-\d{4}/.test(v);
+                return /\d{4}-\d{4}/.test(v) && v.length === 9;
             },
             message: props => `${props.value} is not a valid phone number! Use XXXX-XXXX format instead.`
         }

@@ -12,6 +12,7 @@ Nodejs, Express
 * Express (Web framework for Node.js)
   * morgan (node.js module, HTTP request logger middleware)
 * Nodemon (Auto restart node application)
+* MongoDB (Mongoose)
 
 Install dependencies: `npm install`
 

@@ -1,8 +1,8 @@
 require('dotenv').config(); // Load environment variables .env file
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors');
 const morgan = require('morgan'); // Morgan for logging
-
 
 morgan.token('responseData', function (req, res) {
     return JSON.stringify(req.body);
@@ -11,6 +11,8 @@ const morganFormatString = morgan(':method :url :status :res[content-length] - :
 
 // Attach Middleware
 const app = express();
+app.use(cors());
+app.use(express.static('dist')); // Frontend Library
 app.use(express.json());
 app.use(morganFormatString);
 
@@ -67,7 +69,29 @@ app.get('/', (request, response) => {
 
 app.get('/info', (request, response) => {
     const date = new Date();
-    response.send(`<p>Phonebook has info for ${persons.length} people</p> <br/> <p>DateTime: ${date}</p>`);
+    const uptime = process.uptime(); // Server uptime in seconds
+
+    // Convert uptime to a more readable format
+    const uptimeDays = Math.floor(uptime / (24 * 60 * 60));
+    const uptimeHours = Math.floor((uptime % (24 * 60 * 60)) / (60 * 60));
+    const uptimeMinutes = Math.floor((uptime % (60 * 60)) / 60);
+    const uptimeSeconds = Math.floor(uptime % 60);
+
+    response.send(`
+        <h1>Phonebook Info</h1>
+        <p>Phonebook has info for ${persons.length} people</p>
+        <p>Server has been running for: ${uptimeDays} days, ${uptimeHours} hours, ${uptimeMinutes} minutes, ${uptimeSeconds} seconds</p>
+        <p>Current server time: ${date.toLocaleString()}</p>
+        <h2>Available Endpoints</h2>
+        <ul>
+            <li>GET / - Welcome message</li>
+            <li>GET /info - Information about the phonebook and server</li>
+            <li>GET /api/persons - Retrieve all persons</li>
+            <li>GET /api/persons/:id - Retrieve a person by ID</li>
+            <li>POST /api/persons - Add a new person</li>
+            <li>DELETE /api/persons/:id - Delete a person by ID</li>
+        </ul>
+    `);
 });
 
 app.get('/api/persons', (request, response) => {
@@ -89,7 +113,6 @@ app.get('/api/persons/:id', (request, response) => {
 app.delete('/api/persons/:id', (request, response) => {
     const id = request.params.id;
     persons = persons.filter(person => person.id !== id);
-
     // Does not delete permanently for now.
     response.status(204).end();
 });
@@ -116,7 +139,7 @@ app.post('/api/persons', (request, response) => {
     }
 
     const person = {
-        id: Math.floor(Math.random() * 1000),
+        id: Math.floor(Math.random() * 1000).toString(),
         name: body.name,
         number: body.number
     };
@@ -126,8 +149,8 @@ app.post('/api/persons', (request, response) => {
 });
 
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
-    console.log(`http://localhost:${PORT} \n`)
+    console.log('visit BaseUrl/info to start');
 });

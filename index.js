@@ -1,6 +1,4 @@
-require('dotenv').config(); // Load environment variables .env file
 const express = require('express');
-const mongoose = require('mongoose');
 const cors = require('cors');
 const morgan = require('morgan'); // Morgan for logging
 
@@ -16,30 +14,13 @@ app.use(express.static('dist')); // Frontend Library
 app.use(express.json());
 app.use(morganFormatString);
 
-const url = process.env.MONGODB_URL;
+// MongoDB Connection, Person Model
+const Person = require('./models/person');
 
-mongoose.set('strictQuery', false);
-mongoose.connect(url);
-
-const personSchema = new mongoose.Schema({
-    name: String,
-    number: String,
-});
-
-// Transform the returned object to a compatible format
-personSchema.set('toJSON', {
-    transform: (document, returnedObject) => {
-        returnedObject.id = returnedObject._id.toString();
-        delete returnedObject._id;
-        delete returnedObject.__v;
-    }
-});
-
-const Person = mongoose.model('Person', personSchema);
-
-app.get('/', (request, response) => {
-    response.send('<h1>API for Phonebook</h1>');
-});
+// Overwritten by the frontend
+// app.get('/', (request, response) => {
+//     response.send('<h1>API for Phonebook</h1>');
+// });
 
 app.get('/info', (request, response) => {
     const date = new Date();
@@ -95,7 +76,6 @@ app.delete('/api/persons/:id', (request, response) => {
 
 app.post('/api/persons', (request, response) => {
     const body = request.body;
-    console.log(body);
 
     if (!body) {
         return response.status(400).json({
@@ -122,10 +102,10 @@ app.post('/api/persons', (request, response) => {
     });
 });
 
-
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
     console.log('visit BaseUrl/info to start');
-    console.log('e.g. if running locally, visit http://localhost:3001/info');
+    console.log('e.g. if running locally, visit http://localhost:3001');
+    console.log('For Info, visit http://localhost:3001/info');
 });

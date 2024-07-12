@@ -32,8 +32,10 @@ app.get('/info', (request, response) => {
     const uptimeMinutes = Math.floor((uptime % (60 * 60)) / 60);
     const uptimeSeconds = Math.floor(uptime % 60);
 
-    response.send(`
+    Person.find({}).then(persons => {
+        response.send(`
         <h1>Phonebook Info</h1>
+        <p>Phonebook has info for ${persons.length} people</p>
         <p>Server has been running for: ${uptimeDays} days, ${uptimeHours} hours, ${uptimeMinutes} minutes, ${uptimeSeconds} seconds</p>
         <p>Current server time: ${date.toLocaleString()}</p>
         <h2>Available Endpoints</h2>
@@ -45,7 +47,8 @@ app.get('/info', (request, response) => {
             <li>POST /api/persons - Add a new person</li>
             <li>DELETE /api/persons/:id - Delete a person by ID</li>
         </ul>
-    `);
+        `);
+    });
 });
 
 app.get('/api/persons', (request, response) => {
@@ -91,8 +94,6 @@ app.post('/api/persons', (request, response) => {
         });
     }
 
-    // Does not check for duplicate names yet
-
     const person = new Person({
         name: body.name,
         number: body.number,
@@ -102,6 +103,20 @@ app.post('/api/persons', (request, response) => {
         response.json(savedPerson);
     });
 });
+
+app.put('/api/persons/:id', (request, response, next) => {
+    const person = {
+        name: request.body.name,
+        number: request.body.number,
+    };
+
+    Person.findByIdAndUpdate(request.params.id, person, { new: true })
+        .then(updatedPerson => {
+            response.json(updatedPerson);
+        })
+        .catch(error => next(error));
+});
+
 
 const unknownEndpoint = (request, response) => {
     response.status(404).send({ error: 'unknown endpoint' });

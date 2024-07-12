@@ -12,8 +12,23 @@ mongoose.connect(url).then(result => {
 });
 
 const personSchema = new mongoose.Schema({
-    name: String,
-    number: String,
+    name: {
+        type: String,
+        required: [true, 'Name required'],
+        minlength: 3,
+    },
+    number: {
+        type: String,
+        required: [true, 'Phone number required'],
+        minlength: 8,
+        validate: {
+            // Custom validator, but 4-4 format instead for Singapore
+            validator: (v) => {
+                return /\d{4}-\d{4}/.test(v);
+            },
+            message: props => `${props.value} is not a valid phone number! Use XXXX-XXXX format instead.`
+        }
+    },
 });
 
 // Transform the returned object to a compatible format

@@ -9,12 +9,7 @@ const password = process.argv[2];
 const personName = process.argv[3];
 const personNumber = process.argv[4];
 const databaseName = "phonebookApp";
-
 const numOfArgs = process.argv.length;
-
-// console.log(personName, personNumber);
-// console.log(process.argv.length);
-
 const url =
     `mongodb+srv://fullstack:${password}@full-stack-open-part3.tgf7jew.mongodb.net/${databaseName}?retryWrites=true&w=majority&appName=full-stack-open-part3`
 

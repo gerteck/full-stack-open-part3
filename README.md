@@ -3,6 +3,10 @@
 Node application.
 Nodejs, Express
 
+### MongoDB
+
+Cloud-based MongoDB database for phonebook application with MongoDB Atlas.
+
 #### Running Server Locally
 
 * `npm run dev` to run server on localhost port 3001.
@@ -20,3 +24,4 @@ Install dependencies: `npm install`
 * VS Code: REST client plugin
   * `/requests/*.rest`
 * (or use Postman)
+

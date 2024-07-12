@@ -1,17 +1,35 @@
+require('dotenv').config(); // Load environment variables .env file
 const express = require('express');
-const app = express();
+const mongoose = require('mongoose');
+const morgan = require('morgan'); // Morgan for logging
 
-var morgan = require('morgan');
+
 morgan.token('responseData', function (req, res) {
     return JSON.stringify(req.body);
-})
-
+});
 const morganFormatString = morgan(':method :url :status :res[content-length] - :response-time ms , :responseData')
 
-
 // Attach Middleware
+const app = express();
 app.use(express.json());
 app.use(morganFormatString);
+
+// Set up for MongoDB
+// const personName = process.argv[3];
+// const personNumber = process.argv[4];
+
+const numOfArgs = process.argv.length;
+const url = process.env.MONGODB_URL;
+
+mongoose.set('strictQuery', false);
+mongoose.connect(url);
+
+const personSchema = new mongoose.Schema({
+    name: String,
+    number: String,
+});
+
+const Person = mongoose.model('Person', personSchema);
 
 let persons = [
     {
@@ -53,7 +71,9 @@ app.get('/info', (request, response) => {
 });
 
 app.get('/api/persons', (request, response) => {
-    response.json(persons);
+    Person.find({}).then(persons => {
+        response.json(persons);
+    });
 });
 
 app.get('/api/persons/:id', (request, response) => {
